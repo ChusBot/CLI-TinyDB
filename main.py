@@ -1,4 +1,4 @@
-from os import path, pardir
+import json
 from pathlib import Path
 from tinydb import TinyDB
 
@@ -35,3 +35,23 @@ if __name__ == '__main__':
 
         if command.startswith('/t'):
             table_name = command[3:].strip()
+
+        if command == '/a':
+            with TinyDB(db_name, encoding='utf-8', ensure_ascii=False) as db:
+                if table_name is None:
+                    print(db.all())
+                else:
+                    print(db.table(table_name).all())
+
+        if command.startswith('/i'):
+            fields = command[3:].strip()
+            doc = {}
+            for f in fields.split(','):
+                key, value = f.split('=')
+                doc[key] = value
+
+            with TinyDB(db_name, encoding='utf-8', ensure_ascii=False) as db:
+                if table_name is None:
+                    db.insert(doc)
+                else:
+                    db.table(table_name).insert(doc)
